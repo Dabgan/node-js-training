@@ -25,36 +25,12 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static('./public', { root: __dirname }));
+app.use(`/subdir`, express.static('./public', { root: __dirname }));
 
-app.get(`^/$|index(.html)?`, (req, res) => {
-    res.sendFile('./views/index.html', { root: __dirname });
-});
-
-app.get(`/new-page(.html)?`, (req, res) => {
-    res.sendFile('./views/new-page.html', { root: __dirname });
-});
-
-app.get('/old-page(.html)?', (req, res) => {
-    res.redirect(301, '/new-page');
-});
-
-// chaining route handlers
-const one = (req, res, next) => {
-    console.log('one');
-    next();
-};
-
-const two = (req, res, next) => {
-    console.log('two');
-    next();
-};
-
-const three = (req, res) => {
-    console.log('three');
-    res.send('Finished!');
-};
-
-app.get('/chain(.html)?', [one, two, three]);
+// routes
+app.use('/', require('./routes/root'));
+app.use('/subdir', require('./routes/subdir'));
+app.use('/employees', require('./routes/api/employees'));
 
 app.all('*', (req, res) => {
     res.status(404);
