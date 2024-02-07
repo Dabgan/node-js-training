@@ -17,6 +17,8 @@ app.use(express.static('./public', { root: __dirname }));
 
 // routes
 app.use('/', require('./routes/root'));
+app.use('/register', require('./routes/register'));
+app.use('/login', require('./routes/login'));
 app.use('/employees', require('./routes/api/employees'));
 
 app.all('*', (req, res) => {
