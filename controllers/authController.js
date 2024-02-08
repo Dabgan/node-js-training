@@ -1,4 +1,9 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const fsPromises = require('fs').promises;
+const path = require('path');
+
+require('dotenv').config();
 
 const usersDB = {
     users: require('../model/users.json'),
@@ -17,10 +22,30 @@ const handleLogin = async (req, res) => {
         // decrypt the password
         const isAuthenticated = await bcrypt.compare(pwd, foundUser.password);
         if (isAuthenticated) {
-            // create JWT
-            return res.status(200).json({ success: `Logged in` });
+            const accessToken = jwt.sign({ username: foundUser.username }, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '30s',
+            });
+            const refreshToken = jwt.sign({ username: foundUser.username }, process.env.REFRESH_TOKEN_SECRET, {
+                expiresIn: '1d',
+            });
+            // Saving refreshToken with current user
+            const otherUsers = usersDB.users.filter((person) => person.username !== foundUser.username);
+            const currentUser = { ...foundUser, refreshToken };
+            usersDB.setUsers([...otherUsers, currentUser]);
+            await fsPromises.writeFile(
+                path.join(__dirname, '..', 'model', 'users.json'),
+                JSON.stringify(usersDB.users)
+            );
+            // secure: false for thunder client testing
+            res.cookie('jwt', refreshToken, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: false,
+                maxAge: 24 * 60 * 60 * 1000,
+            });
+            res.json({ accessToken });
         } else {
-            return res.status(401).json({ message: 'Username or password is wrong' });
+            res.status(401).json({ message: 'Username or password is wrong' });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
