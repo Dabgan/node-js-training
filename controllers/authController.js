@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fsPromises = require('fs').promises;
 const path = require('path');
+// const ROLES_LIST = require('../config/rolesList');
 
 require('dotenv').config();
 
@@ -22,9 +23,14 @@ const handleLogin = async (req, res) => {
         // decrypt the password
         const isAuthenticated = await bcrypt.compare(pwd, foundUser.password);
         if (isAuthenticated) {
-            const accessToken = jwt.sign({ username: foundUser.username }, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: '30s',
-            });
+            const roles = Object.values(foundUser.roles);
+            const accessToken = jwt.sign(
+                { UserInfo: { username: foundUser.username, roles } },
+                process.env.ACCESS_TOKEN_SECRET,
+                {
+                    expiresIn: '30s',
+                }
+            );
             const refreshToken = jwt.sign({ username: foundUser.username }, process.env.REFRESH_TOKEN_SECRET, {
                 expiresIn: '1d',
             });
@@ -34,7 +40,7 @@ const handleLogin = async (req, res) => {
             usersDB.setUsers([...otherUsers, currentUser]);
             await fsPromises.writeFile(
                 path.join(__dirname, '..', 'model', 'users.json'),
-                JSON.stringify(usersDB.users)
+                JSON.stringify(usersDB.users, null, '\t')
             );
             // secure: false for thunder client testing
             res.cookie('jwt', refreshToken, {
