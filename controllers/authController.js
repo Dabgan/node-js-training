@@ -4,8 +4,6 @@ const fsPromises = require('fs').promises;
 const path = require('path');
 // const ROLES_LIST = require('../config/rolesList');
 
-require('dotenv').config();
-
 const usersDB = {
     users: require('../model/users.json'),
     setUsers: function (data) {
