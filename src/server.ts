@@ -1,6 +1,8 @@
+import { Application, Request, Response } from 'express';
+
 require('dotenv').config();
 const express = require('express');
-const app = express();
+const app: Application = express();
 const cors = require('cors');
 const { logger } = require('./middleware/logEvents');
 const errorHandler = require('./middleware/errorHandler');
@@ -47,7 +49,7 @@ app.use('/logout', require('./routes/logout'));
 app.use(verifyJWT);
 app.use('/employees', require('./routes/api/employees'));
 
-app.all('*', (req, res) => {
+app.all('*', (req: Request, res: Response) => {
     res.status(404);
     if (req.accepts('html')) {
         res.sendFile('./views/404.html', { root: __dirname });
