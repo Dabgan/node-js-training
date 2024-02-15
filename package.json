@@ -4,8 +4,8 @@
     "description": "node js course training",
     "main": "server.js",
     "scripts": {
-        "start": "node server",
-        "start:dev": "npx nodemon"
+        "start": "tsx src/server.ts",
+        "dev": "tsx watch src/server.ts"
     },
     "author": "Gabriel Daniluk",
     "license": "ISC",
@@ -25,8 +25,7 @@
         "@types/express": "^4.17.21",
         "@types/node": "^20.11.17",
         "eslint": "^8.56.0",
-        "nodemon": "^3.0.3",
-        "ts-node": "^10.9.2",
+        "tsx": "^4.7.1",
         "typescript": "^5.3.3"
     }
 }

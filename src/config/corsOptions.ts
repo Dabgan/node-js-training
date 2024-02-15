@@ -1,15 +1,16 @@
-const whitelist = require('./whitelistOrigins');
+import { CorsOptions } from 'cors';
 
-// cross origin resource sharing
-const corsOptions = {
-    origin: (origin: any, callback: any) => {
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
+const whitelist: string[] = require('./whitelistOrigins');
+
+const corsOptions: CorsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        if (!origin || whitelist.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error('Not allowed by CORS'), false);
         }
     },
     optionsSuccessStatus: 200,
 };
 
-module.exports = corsOptions;
+export default corsOptions;
