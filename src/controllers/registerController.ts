@@ -1,7 +1,8 @@
-const bcrypt = require('bcrypt');
-const User = require('../model/User');
+import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import User from '../model/User';
 
-const handleNewUser = async (req, res) => {
+export const handleNewUser = async (req: Request, res: Response) => {
     const { user, pwd } = req.body;
     if (!user || !pwd) return res.status(400).json({ message: 'Username and password are required' });
 
@@ -15,8 +16,6 @@ const handleNewUser = async (req, res) => {
         });
         res.status(201).json({ success: `New user ${user} created` });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error });
     }
 };
-
-module.exports = { handleNewUser };

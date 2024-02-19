@@ -1,5 +1,6 @@
 import { Application, Request, Response } from 'express';
 import corsOptions from './config/corsOptions';
+import connectDB from './config/dbConnection';
 
 require('dotenv').config();
 const express = require('express');
@@ -11,7 +12,6 @@ const verifyJWT = require('./middleware/verifyJWT');
 const cookieParser = require('cookie-parser');
 const credentials = require('./middleware/credentials');
 const mongoose = require('mongoose');
-const connectDB = require('./config/dbConnection');
 const PORT = process.env.PORT || 3500;
 
 // Connect to MongoDB

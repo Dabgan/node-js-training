@@ -1,7 +1,8 @@
-const jwt = require('jsonwebtoken');
-const User = require('../model/User');
+import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import User from '../model/User';
 
-const handleRefreshToken = async (req, res) => {
+export const handleRefreshToken = async (req: Request, res: Response) => {
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.sendStatus(401);
 
@@ -10,17 +11,15 @@ const handleRefreshToken = async (req, res) => {
     if (!foundUser) return res.sendStatus(403); // Forbidden
 
     // evaluate jwt
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string, (err: any, decoded: any) => {
         if (err || foundUser.username !== decoded.username) return res.sendStatus(403);
-        const roles = Object.values(foundUser.roles);
+        const roles = !foundUser.roles ? { User: 69 } : Object.values(foundUser.roles);
         const accessToken = jwt.sign(
             { UserInfo: { username: foundUser.username, roles } },
-            process.env.ACCESS_TOKEN_SECRET,
+            process.env.ACCESS_TOKEN_SECRET as string,
             { expiresIn: '30s' }
         );
 
         res.json({ accessToken });
     });
 };
-
-module.exports = { handleRefreshToken };

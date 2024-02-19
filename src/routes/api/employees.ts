@@ -1,14 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
     getAllEmployees,
     createNewEmployee,
     updateEmployee,
     deleteEmployee,
     getEmployeeById,
-} = require('../../controllers/eployeesController');
-const ROLES_LIST = require('../../config/rolesList');
-const verifyRoles = require('../../middleware/verifyRoles');
+} from '../../controllers/eployeesController';
+import { ROLES_LIST } from '../../config/rolesList';
+import verifyRoles from '../../middleware/verifyRoles';
+
+const router = express.Router();
 
 router
     .route('/')
@@ -19,4 +20,4 @@ router
 
 router.route('/:id').get(getEmployeeById);
 
-module.exports = router;
+export default router;

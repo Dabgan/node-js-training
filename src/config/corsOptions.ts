@@ -1,6 +1,5 @@
 import { CorsOptions } from 'cors';
-
-const whitelist: string[] = require('./whitelistOrigins');
+import { whitelist } from './whitelistOrigins';
 
 const corsOptions: CorsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
